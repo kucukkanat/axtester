@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>axagent - AI Agent Readiness Auditor</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/web/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/atom-one-dark.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <span class="icon">🔍</span>
+                <span class="text">axagent</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#modes">Modes</a></li>
+                <li><a href="#usage">Usage</a></li>
+                <li><a href="#install">Install</a></li>
+                <li><a href="https://github.com" class="btn-github">GitHub →</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Audit Any Website for AI Agent Readiness</h1>
+                <p class="hero-subtitle">Measure how well websites work with autonomous agents, LLMs, and web scrapers across 8 comprehensive dimensions.</p>
+
+                <div class="hero-cta">
+                    <a href="#install" class="btn btn-primary">Get Started</a>
+                    <a href="#demo" class="btn btn-secondary">See Demo</a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Audit Categories</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Development Phases</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">71</div>
+                        <div class="stat-label">Passing Tests</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="demo-code">
+$ bun run cli.ts https://example.com
+
+<span class="score">Overall Score: 83/100 (Grade: B)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>What Makes It Powerful</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>8-Category Analysis</h3>
+                    <p>Comprehensive scoring across structural parsability, semantic clarity, friction, extraction quality, token economics, temporal stability, interaction surface, and multimodal readiness.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Static Audit (Fast)</h3>
+                    <p>Analyze website structure in seconds. No browser automation needed. Perfect for quick assessments and CI/CD pipelines.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Dynamic Testing</h3>
+                    <p>LLM-powered agent actually navigates sites, clicks buttons, fills forms, and reports real-world barriers agents encounter.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔓</div>
+                    <h3>Stealth Mode</h3>
+                    <p>Anti-bot detection evasion with User-Agent rotation, fingerprint spoofing, human-like delays, and realistic headers.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Model Agnostic</h3>
+                    <p>Works with Claude, GPT-4, Gemini, or any OpenAI-compatible LLM endpoint for task execution.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Library & CLI</h3>
+                    <p>Use as a Bun library for custom workflows or run CLI for quick audits. Both approaches fully supported.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modes Section -->
+    <section id="modes" class="modes">
+        <div class="container">
+            <h2>Two Powerful Modes</h2>
+
+            <div class="modes-grid">
+                <!-- Static Audit -->
+                <div class="mode-card">
+                    <div class="mode-header static">
+                        <h3>🔍 Static Audit</h3>
+                        <span class="badge">Fast • No Browser</span>
+                    </div>
+
+                    <div class="mode-content">
+                        <h4>What it does:</h4>
+                        <ul>
+                            <li>Analyzes HTML structure</li>
+                            <li>Checks semantic markup</li>
+                            <li>Detects bot barriers</li>
+                            <li>Calculates token cost</li>
+                            <li>Scores all 8 categories</li>
+                        </ul>
+
+                        <h4>Perfect for:</h4>
+                        <ul>
+                            <li>Quick site assessments</li>
+                            <li>CI/CD pipelines</li>
+                            <li>Automated monitoring</li>
+                            <li>Development feedback</li>
+                        </ul>
+
+                        <h4>Time:</h4>
+                        <p class="time">~200-500ms</p>
+
+                        <h4>Example:</h4>
+                        <pre><code class="language-bash">bun run cli.ts https://example.com --format json</code></pre>
+                    </div>
+                </div>
+
+                <!-- Dynamic Task Execution -->
+                <div class="mode-card">
+                    <div class="mode-header dynamic">
+                        <h3>🤖 Task Execution</h3>
+                        <span class="badge">Real • Browser + LLM</span>
+                    </div>
+
+                    <div class="mode-content">
+                        <h4>What it does:</h4>
+                        <ul>
+                            <li>Controls real browser</li>
+                            <li>LLM navigates site</li>
+                            <li>Detects barriers</li>
+                            <li>Extracts information</li>
+                            <li>Reports real-world friction</li>
+                        </ul>
+
+                        <h4>Perfect for:</h4>
+                        <ul>
+                            <li>Real-world readiness</li>
+                            <li>Barrier discovery</li>
+                            <li>Form testing</li>
+                            <li>Data extraction verification</li>
+                        </ul>
+
+                        <h4>Time:</h4>
+                        <p class="time">~2-5 minutes</p>
+
+                        <h4>Example:</h4>
+                        <pre><code class="language-bash">LLM_API_KEY=sk-ant-... bun run cli.ts task https://example.com "Find product"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The 8 Categories Section -->
+    <section class="categories">
+        <div class="container">
+            <h2>8 Audit Categories</h2>
+            <p class="section-subtitle">Each category scores a specific dimension of agent accessibility</p>
+
+            <div class="categories-grid">
+                <div class="category">
+                    <div class="cat-header high">
+                        <h4>Anti-Agent Friction</h4>
+                        <span class="weight">18% (Highest)</span>
+                    </div>
+                    <p>CAPTCHA, WAF, login walls, bot filtering, consent walls</p>
+                    <div class="icons">🚫 CAPTCHA • 🔒 Login • 🛡️ WAF</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Structural Parsability</h4>
+                        <span class="weight">15%</span>
+                    </div>
+                    <p>DOM depth, content ratio, SPA detection, text in images</p>
+                    <div class="icons">🏗️ DOM • 📊 Ratio • ⚙️ SPA</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Semantic Clarity</h4>
+                        <span class="weight">15%</span>
+                    </div>
+                    <p>Semantic HTML, heading hierarchy, labels, text clarity</p>
+                    <div class="icons">📝 HTML • 📋 Labels • 🔤 Text</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Interaction Surface</h4>
+                        <span class="weight">12%</span>
+                    </div>
+                    <p>Form accessibility, ARIA, buttons, dropdown usability</p>
+                    <div class="icons">🖱️ Forms • ♿ ARIA • 🔘 Buttons</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Data Extraction Quality</h4>
+                        <span class="weight">12%</span>
+                    </div>
+                    <p>JSON-LD, microdata, tables, pagination, API signals</p>
+                    <div class="icons">📦 JSON-LD • 📊 Tables • 🔗 Pagination</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Token Economics</h4>
+                        <span class="weight">10%</span>
+                    </div>
+                    <p>Token cost estimation, content-to-noise ratio, API potential</p>
+                    <div class="icons">💰 Cost • 🎯 Ratio • 💡 API</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Temporal Stability</h4>
+                        <span class="weight">8% (Lowest)</span>
+                    </div>
+                    <p>CSS stability, A/B testing detection, dynamic rendering</p>
+                    <div class="icons">⏱️ Stability • 🧪 A/B • 🔄 Dynamic</div>
+                </div>
+
+                <div class="category">
+                    <div class="cat-header">
+                        <h4>Multimodal Readiness</h4>
+                        <span class="weight">10%</span>
+                    </div>
+                    <p>Alt text, icon labels, contrast signals, viewport meta</p>
+                    <div class="icons">🖼️ Images • 🎨 Contrast • 📱 Viewport</div>
+                </div>
+            </div>
+
+            <div class="grade-scale">
+                <h3>Grade Scale</h3>
+                <div class="grades">
+                    <div class="grade" style="--grade-color: #10b981">
+                        <strong>A</strong> 85-100<br>
+                        <small>Excellent</small>
+                    </div>
+                    <div class="grade" style="--grade-color: #3b82f6">
+                        <strong>B</strong> 70-84<br>
+                        <small>Good</small>
+                    </div>
+                    <div class="grade" style="--grade-color: #f59e0b">
+                        <strong>C</strong> 55-69<br>
+                        <small>Moderate</small>
+                    </div>
+                    <div class="grade" style="--grade-color: #ef4444">
+                        <strong>D</strong> 40-54<br>
+                        <small>Poor</small>
+                    </div>
+                    <div class="grade" style="--grade-color: #7c2d12">
+                        <strong>F</strong> 0-39<br>
+                        <small>Not Ready</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Usage Section -->
+    <section id="usage" class="usage">
+        <div class="container">
+            <h2>Quick Usage</h2>
+
+            <div class="usage-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab(event, 'static')">Static Audit</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'task')">Task Execution</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'library')">As Library</button>
+                </div>
+
+                <div id="static" class="tab-content active">
+                    <h3>Quick Static Audit</h3>
+                    <pre><code class="language-bash"># Basic audit
+bun run cli.ts https://example.com
+
+# JSON output
+bun run cli.ts https://example.com --format json
+
+# Specific categories
+bun run cli.ts https://example.com -c anti-agent-friction,token-economics
+
+# Save to file
+bun run cli.ts https://example.com --format md -o report.md</code></pre>
+                </div>
+
+                <div id="task" class="tab-content">
+                    <h3>Task Execution with LLM Agent</h3>
+                    <pre><code class="language-bash"># Set up LLM key
+export LLM_API_KEY=sk-ant-...
+
+# Run a task
+bun run cli.ts task https://example.com "Find the product price"
+
+# With stealth mode (bypass bot protection)
+bun run cli.ts task https://protected-site.com "Get data" --stealth
+
+# Combined audit + task
+bun run cli.ts task https://example.com "Test form" --with-audit --format md</code></pre>
+                </div>
+
+                <div id="library" class="tab-content">
+                    <h3>Use as Bun Library</h3>
+                    <pre><code class="language-typescript">import { runAudit, runTask } from "axagent";
+
+// Static audit
+const audit = await runAudit("https://example.com");
+console.log(`Score: ${audit.overallScore}/100`);
+
+// Dynamic task
+import { createAdapterFromEnv } from "axagent";
+const llmAdapter = createAdapterFromEnv();
+const task = await runTask("https://example.com", {
+  prompt: "Find the price",
+  llmAdapter,
+  stealth: { enabled: true }
+});
+console.log(`Result: ${task.agentAnswer}`);</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stealth Mode Section -->
+    <section class="stealth">
+        <div class="container">
+            <h2>Stealth Mode: Anti-Bot Detection Evasion</h2>
+            <p class="section-subtitle">Bypass bot protection to audit protected websites</p>
+
+            <div class="stealth-features">
+                <div class="stealth-column">
+                    <h4>🔍 What It Does</h4>
+                    <ul>
+                        <li>Masks <code>navigator.webdriver</code></li>
+                        <li>Spoofs chrome object</li>
+                        <li>Rotates User-Agent strings</li>
+                        <li>Simulates human-like delays</li>
+                        <li>Moves mouse realistically</li>
+                        <li>Injects realistic headers</li>
+                        <li>Spoof geolocation</li>
+                        <li>Masks Function.toString()</li>
+                    </ul>
+                </div>
+
+                <div class="stealth-column">
+                    <h4>⚙️ How to Use</h4>
+                    <pre><code class="language-bash"># Enable all stealth features
+bun run cli.ts task https://site.com "task" --stealth
+
+# Granular control
+--no-stealth-delay    # Disable delays
+--no-stealth-mouse    # Disable mouse sim
+--no-stealth-geo      # Disable geo-spoofing
+--no-stealth-ua       # Disable UA rotation</code></pre>
+                </div>
+            </div>
+
+            <div class="stealth-note">
+                <strong>⚠️ Important:</strong> Stealth mode is not guaranteed to bypass all detection. Modern CDNs (Cloudflare, DataDome) may still detect automated traffic. Works best at low frequency with realistic patterns.
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="install" class="install">
+        <div class="container">
+            <h2>Installation</h2>
+
+            <div class="install-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Install Bun</h3>
+                    <p>axagent requires Bun runtime</p>
+                    <pre><code class="language-bash">curl -fsSL https://bun.sh/install | bash</code></pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Clone Repository</h3>
+                    <p>Get the axagent code</p>
+                    <pre><code class="language-bash">git clone https://github.com/yourusername/axagent.git
+cd axagent</code></pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Install Dependencies</h3>
+                    <p>Install all packages with Bun</p>
+                    <pre><code class="language-bash">bun install</code></pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Audit a Website</h3>
+                    <p>Try your first audit</p>
+                    <pre><code class="language-bash">bun run cli.ts https://github.com</code></pre>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <h3>Task Execution (Optional)</h3>
+                    <p>Set up LLM for agent testing</p>
+                    <pre><code class="language-bash">export LLM_API_KEY=sk-ant-...
+bun run cli.ts task https://example.com "Find product"</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture">
+        <div class="container">
+            <h2>Architecture Overview</h2>
+
+            <div class="arch-diagram">
+                <div class="arch-layer">
+                    <h4>CLI & Library API</h4>
+                    <p><code>cli.ts</code> • <code>src/index.ts</code></p>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer">
+                    <h4>Runner & Orchestration</h4>
+                    <p><code>runner.ts</code> • <code>task-runner.ts</code></p>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer arch-split">
+                    <div class="split-item">
+                        <h4>Static Analysis</h4>
+                        <p>8 Auditors</p>
+                    </div>
+                    <div class="split-item">
+                        <h4>Dynamic Testing</h4>
+                        <p>Agent Loop</p>
+                    </div>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer">
+                    <h4>Core Infrastructure</h4>
+                    <p>Parser • Fetcher • Types</p>
+                </div>
+
+                <div class="arch-arrow">↓</div>
+
+                <div class="arch-layer">
+                    <h4>Bun Runtime</h4>
+                    <p>Bun.fetch • Bun.write • Puppeteer</p>
+                </div>
+            </div>
+
+            <div class="stats-box">
+                <h3>By The Numbers</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-num">30+</div>
+                        <div class="stat-desc">TypeScript Files</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">9,300+</div>
+                        <div class="stat-desc">Lines of Code</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">71</div>
+                        <div class="stat-desc">Passing Tests</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-num">4</div>
+                        <div class="stat-desc">Phases Built</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>axagent</h4>
+                    <p>AI Agent Readiness Auditor</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com">GitHub</a></li>
+                        <li><a href="https://github.com/issues">Issues</a></li>
+                        <li><a href="https://github.com/discussions">Discussions</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://bun.sh">Bun Docs</a></li>
+                        <li><a href="https://pptr.dev">Puppeteer Docs</a></li>
+                        <li><a href="https://claude.ai">Claude AI</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 axagent. Built with ❤️ for analyzing websites for AI agent accessibility.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Syntax highlighting
+        hljs.highlightAll();
+
+        // Tab switching
+        function switchTab(event, tabName) {
+            event.preventDefault();
+
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Re-highlight code in the new tab
+            setTimeout(() => hljs.highlightAll(), 0);
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

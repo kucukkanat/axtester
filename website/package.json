@@ -1,0 +1,14 @@
+{
+  "name": "axagent-website",
+  "version": "1.0.0",
+  "description": "Website for axagent - AI Agent Readiness Auditor",
+  "type": "module",
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "dev": "bun run --watch scripts/dev.ts",
+    "serve": "cd docs && python3 -m http.server 3000 || npx http-server -p 3000"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
