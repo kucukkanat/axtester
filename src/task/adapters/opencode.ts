@@ -135,19 +135,20 @@ export class OpencodeAdapter implements LLMAdapter {
         ),
       ]);
 
+      // OpenCode SDK wraps response in { error, request, response }
+      const actualResponse = response.response || response;
+
       // Parse response
-      const responseText = this.extractResponseText(response);
+      const responseText = this.extractResponseText(actualResponse);
       const toolCalls = this.extractToolCalls(responseText, tools);
 
-      // Debug: Log response format for first few calls
-      if (!globalThis.__opencodeDebugLogged) {
-        globalThis.__opencodeDebugLogged = true;
-        console.error("[DEBUG] OpenCode Response Format:");
-        console.error("Keys:", Object.keys(response));
-        console.error("Usage:", response.usage);
-        console.error("Stop Reason:", response.stop_reason);
-        console.error("Parts:", Array.isArray(response.parts) ? response.parts.length : "not array");
-        console.error("Text Length:", responseText.length);
+      // Extract tokens from the nested response
+      let usage: { inputTokens: number; outputTokens: number } | undefined;
+      if (actualResponse.usage) {
+        usage = {
+          inputTokens: actualResponse.usage.input_tokens || actualResponse.usage.inputTokens || 0,
+          outputTokens: actualResponse.usage.output_tokens || actualResponse.usage.outputTokens || 0,
+        };
       }
 
       return {
@@ -156,13 +157,8 @@ export class OpencodeAdapter implements LLMAdapter {
           content: [{ type: "text", text: responseText }],
           toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
         },
-        usage: response.usage
-          ? {
-              inputTokens: response.usage.input_tokens || response.usage.inputTokens || 0,
-              outputTokens: response.usage.output_tokens || response.usage.outputTokens || 0,
-            }
-          : { inputTokens: 0, outputTokens: 0 },
-        stopReason: this.mapStopReason(response.stop_reason || "end_turn"),
+        usage,
+        stopReason: this.mapStopReason(actualResponse.stop_reason || "end_turn"),
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -185,13 +181,27 @@ export class OpencodeAdapter implements LLMAdapter {
   }
 
   private extractResponseText(response: any): string {
+    // Debug log response structure
+    if (!globalThis.__opencodeResponseLogged) {
+      globalThis.__opencodeResponseLogged = true;
+      console.error("[DEBUG] Actual Response Structure:");
+      console.error("Response keys:", Object.keys(response));
+      console.error("Response.parts:", Array.isArray(response.parts) ? `${response.parts.length} items` : typeof response.parts);
+      if (Array.isArray(response.parts) && response.parts.length > 0) {
+        console.error("First part:", JSON.stringify(response.parts[0], null, 2).slice(0, 500));
+      }
+      console.error("Response.text:", typeof response.text, response.text?.slice(0, 100));
+      console.error("Response.message:", typeof response.message);
+      console.error("Response keys:", Object.keys(response).slice(0, 20));
+    }
+
     if (Array.isArray(response.parts)) {
       return response.parts
         .filter((p: any) => p.type === "text")
         .map((p: any) => p.text || "")
         .join("");
     }
-    return response.text || "";
+    return response.text || response.message || "";
   }
 
   private extractToolCalls(
