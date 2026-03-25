@@ -13,7 +13,7 @@ interface CliArgs {
   command: Command;
   url?: string;
   prompt?: string;
-  format: "text" | "json" | "md";
+  format: "text" | "json" | "md" | "html";
   categories?: AuditCategory[];
   timeout?: number;
   userAgent?: string;
@@ -76,7 +76,7 @@ function parseArgs(argv: string[]): CliArgs {
       i++;
     } else if (arg === "--format" || arg === "-f") {
       const value = cliArgs[++i];
-      if (value === "text" || value === "json" || value === "md") {
+      if (value === "text" || value === "json" || value === "md" || value === "html") {
         args.format = value;
       }
       i++;
@@ -166,7 +166,7 @@ Arguments (task):
   prompt                  Task description for agent (required)
 
 Common Options:
-  --format, -f            Output format: text | json | md        [default: text]
+  --format, -f            Output format: text | json | md | html  [default: text]
   --output, -o            Write report to file path
   --quiet, -q             Suppress all output except the report
   --no-color              Disable ANSI color output
@@ -342,6 +342,224 @@ function formatMdReport(report: AuditReport): string {
   }
 
   return output;
+}
+
+function formatHtmlReport(report: AuditReport): string {
+  const gradeColor = (score: number) => {
+    if (score >= 85) return "#00d4aa";
+    if (score >= 70) return "#7dd87d";
+    if (score >= 55) return "#ffcc00";
+    if (score >= 40) return "#ff6b35";
+    return "#ff3b5c";
+  };
+
+  const gradeBg = (score: number) => {
+    if (score >= 85) return "rgba(0,212,170,.15)";
+    if (score >= 70) return "rgba(125,216,125,.15)";
+    if (score >= 55) return "rgba(255,204,0,.15)";
+    if (score >= 40) return "rgba(255,107,53,.15)";
+    return "rgba(255,59,92,.15)";
+  };
+
+  const getGrade = (score: number) => {
+    if (score >= 85) return "A";
+    if (score >= 70) return "B";
+    if (score >= 55) return "C";
+    if (score >= 40) return "D";
+    return "F";
+  };
+
+  const findingColor = (severity: string) => {
+    if (severity === "critical") return "bad";
+    if (severity === "warning") return "warn";
+    if (severity === "info") return "info";
+    return "good";
+  };
+
+  const findingIcon = (severity: string) => {
+    if (severity === "critical") return "🔴";
+    if (severity === "warning") return "🟠";
+    if (severity === "info") return "🔵";
+    return "✅";
+  };
+
+  let html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Readiness Audit — ${new URL(report.url).hostname}</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0c10;--surface:#12151c;--surface2:#1a1e28;--border:#242a38;
+  --text:#e4e8f0;--text-dim:#8891a5;--text-muted:#5a6378;
+  --accent:#00d4aa;--accent2:#0099ff;--warn:#ff6b35;--fail:#ff3b5c;--good:#00d4aa;
+  --grade-a:#00d4aa;--grade-b:#7dd87d;--grade-c:#ffcc00;--grade-d:#ff6b35;--grade-f:#ff3b5c;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+.mono{font-family:'JetBrains Mono',monospace}
+.hero{padding:60px 40px 40px;max-width:1200px;margin:0 auto;position:relative}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--accent);margin-bottom:20px;font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+.hero h1{font-size:clamp(32px,5vw,56px);font-weight:700;line-height:1.1;margin-bottom:12px;background:linear-gradient(135deg,var(--text),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:18px;color:var(--text-dim);max-width:640px}
+.meta-row{display:flex;gap:32px;margin-top:24px;flex-wrap:wrap}
+.meta-item{font-size:13px;color:var(--text-muted)}
+.meta-item span{color:var(--text);font-weight:500}
+.score-hero{display:flex;align-items:center;gap:48px;padding:40px;margin:0 40px;max-width:1120px;background:var(--surface);border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden}
+.score-ring{position:relative;width:160px;height:160px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring .track{fill:none;stroke:var(--surface2);stroke-width:8}
+.score-ring .fill{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:calc(440 - (440 * var(--pct) / 100));transition:stroke-dashoffset 1.5s ease}
+.score-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-val .num{font-size:48px;font-weight:700;color:var(--accent);line-height:1}
+.score-val .of{font-size:14px;color:var(--text-muted)}
+.score-detail h2{font-size:28px;font-weight:700;margin-bottom:8px}
+.grade{display:inline-block;padding:4px 12px;border-radius:6px;font-size:14px;font-weight:700;margin-left:12px}
+.pill{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:600}
+.score-detail p{color:var(--text-dim);font-size:15px;max-width:520px}
+.cats{max-width:1200px;margin:40px auto;padding:0 40px}
+.cats h2{font-size:24px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.line{flex:1;height:1px;background:var(--border)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;position:relative;overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--accent)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.card-top h3{font-size:16px;font-weight:600}
+.weight{font-size:12px;color:var(--text-muted);background:var(--surface2);padding:3px 10px;border-radius:10px}
+.card-score{display:flex;align-items:baseline;gap:6px;margin-bottom:12px}
+.big{font-size:36px;font-weight:700;line-height:1}
+.bar-bg{height:6px;background:var(--surface2);border-radius:3px;margin-bottom:16px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 1.2s ease}
+.findings{list-style:none;font-size:13px;color:var(--text-dim)}
+.findings li{padding:4px 0;display:flex;align-items:flex-start;gap:8px}
+.findings li::before{content:'';width:4px;height:4px;border-radius:50%;margin-top:8px;flex-shrink:0}
+.findings .good::before{background:var(--good)}
+.findings .warn::before{background:var(--warn)}
+.findings .bad::before{background:var(--fail)}
+.findings .info::before{background:var(--accent2)}
+.summary{max-width:1200px;margin:40px auto;padding:0 40px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;padding:12px 16px;color:var(--text-muted);font-weight:500;border-bottom:1px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.tbl td{padding:12px 16px;border-bottom:1px solid rgba(36,42,56,.5)}
+.tbl tr:hover td{background:rgba(0,212,170,.02)}
+.verdict{max-width:1200px;margin:40px auto 60px;padding:0 40px}
+.verdict-box{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:16px;padding:40px}
+.foot{text-align:center;padding:40px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border)}
+@media(max-width:768px){.hero,.cats,.summary,.verdict{padding-left:20px;padding-right:20px}.score-hero{flex-direction:column;margin:0 20px;gap:24px;text-align:center}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge">🔍 Live Audit Report</div>
+  <h1>Agent Readiness Audit</h1>
+  <p class="subtitle">How ready is <strong>${new URL(report.url).hostname}</strong> for autonomous AI agents? An accessibility test — not for humans, but for machines.</p>
+  <div class="meta-row">
+    <div class="meta-item">Target: <span>${report.url}</span></div>
+    <div class="meta-item">Date: <span>${new Date(report.fetchedAt).toLocaleDateString()}</span></div>
+    <div class="meta-item">Categories: <span>${report.categories.length}</span></div>
+    <div class="meta-item">Duration: <span>${report.durationMs}ms</span></div>
+  </div>
+</div>
+
+<div class="score-hero" style="--pct:${report.overallScore}">
+  <div class="score-ring">
+    <svg viewBox="0 0 160 160" width="160" height="160">
+      <circle class="track" cx="80" cy="80" r="70"/>
+      <circle class="fill" cx="80" cy="80" r="70"/>
+    </svg>
+    <div class="score-val">
+      <span class="num">${report.overallScore}</span>
+      <span class="of">/ 100</span>
+    </div>
+  </div>
+  <div class="score-detail">
+    <h2>Weighted Score<span class="grade pill" style="background:${gradeBg(report.overallScore)};color:${gradeColor(report.overallScore)}">${getGrade(report.overallScore)}</span></h2>
+    <p>${report.summary}</p>
+  </div>
+</div>
+
+<div class="cats">
+  <h2>Category Breakdown <span class="line"></span></h2>
+  <div class="grid">
+`;
+
+  for (const cat of report.categories) {
+    const color = gradeColor(cat.score);
+    const bg = gradeBg(cat.score);
+    const grade = getGrade(cat.score);
+    const catName = cat.category.replace(/-/g, " ");
+
+    html += `    <div class="card">
+      <div class="card-top"><h3>${catName}</h3><span class="weight mono">${(cat.weight * 100).toFixed(0)}%</span></div>
+      <div class="card-score">
+        <span class="big" style="color:${color}">${cat.score}</span>
+        <span class="pill" style="background:${bg};color:${color}">${grade}</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${cat.score}%;background:${color}"></div></div>
+      <ul class="findings">
+`;
+
+    if (cat.findings.length === 0) {
+      html += `        <li class="good">✓ No issues detected</li>\n`;
+    } else {
+      for (const finding of cat.findings) {
+        const fColor = findingColor(finding.severity);
+        html += `        <li class="${fColor}">${findingIcon(finding.severity)} ${finding.message}</li>\n`;
+      }
+    }
+
+    html += `      </ul>
+    </div>\n`;
+  }
+
+  html += `  </div>
+</div>
+
+<div class="summary">
+  <h2>Score Summary <span class="line"></span></h2>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Weight</th>
+        <th>Score</th>
+        <th>Grade</th>
+        <th>Weighted</th>
+      </tr>
+    </thead>
+    <tbody>
+`;
+
+  for (const cat of report.categories) {
+    const weighted = (cat.score * cat.weight).toFixed(2);
+    const color = gradeColor(cat.score);
+    const bg = gradeBg(cat.score);
+    const grade = getGrade(cat.score);
+    const catName = cat.category.replace(/-/g, " ");
+
+    html += `      <tr><td>${catName}</td><td class="mono">${(cat.weight * 100).toFixed(0)}%</td><td class="mono">${cat.score}</td><td><span class="pill" style="background:${bg};color:${color}">${grade}</span></td><td class="mono">${weighted}</td></tr>\n`;
+  }
+
+  html += `    </tbody>
+  </table>
+</div>
+
+<div class="verdict">
+  <div class="verdict-box">
+    <h2>Verdict</h2>
+    <p>${report.summary}</p>
+  </div>
+</div>
+
+<div class="foot">
+  <p>Generated by <strong>axagent</strong> — AI Agent Readiness Auditor | ${new Date(report.fetchedAt).toISOString()}</p>
+</div>
+</body>
+</html>`;
+
+  return html;
 }
 
 function formatTaskTextReport(
@@ -634,6 +852,8 @@ async function main() {
         output = formatJsonReport(report);
       } else if (args.format === "md") {
         output = formatMdReport(report);
+      } else if (args.format === "html") {
+        output = formatHtmlReport(report);
       } else {
         output = formatTextReport(report, !args.noColor);
       }
