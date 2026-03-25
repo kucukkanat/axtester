@@ -326,12 +326,12 @@ bun run cli.ts https://example.com --format md -o report.md</code></pre>
                 </div>
 
                 <div id="task" class="tab-content">
-                    <h3>Task Execution with LLM Agent</h3>
-                    <pre><code class="language-bash"># Set up LLM key
-export LLM_API_KEY=sk-ant-...
-
-# Run a task
+                    <h3>Task Execution with LLM Agent (Local opencode)</h3>
+                    <pre><code class="language-bash"># Run a task (requires local opencode running)
 bun run cli.ts task https://example.com "Find the product price"
+
+# With custom model
+LLM_MODEL=claude-sonnet-4 bun run cli.ts task https://example.com "Find data"
 
 # With stealth mode (bypass bot protection)
 bun run cli.ts task https://protected-site.com "Get data" --stealth
@@ -440,8 +440,11 @@ cd axagent</code></pre>
                 <div class="step">
                     <div class="step-number">5</div>
                     <h3>Task Execution (Optional)</h3>
-                    <p>Set up LLM for agent testing</p>
-                    <pre><code class="language-bash">export LLM_API_KEY=sk-ant-...
+                    <p>Start local opencode, then run tasks</p>
+                    <pre><code class="language-bash"># Start opencode (if not running)
+opencode start
+
+# Run task with local LLM
 bun run cli.ts task https://example.com "Find product"</code></pre>
                 </div>
             </div>

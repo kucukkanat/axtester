@@ -191,11 +191,17 @@ Stealth Mode (Anti-Bot Detection):
   --no-stealth-geo        Disable geolocation spoofing
   --no-stealth-ua         Disable User-Agent rotation
 
-Environment Variables:
-  LLM_API_KEY            Required for task execution
-  LLM_PROVIDER           "claude" | "openai"                    [default: claude]
-  LLM_MODEL              Default model ID
-  LLM_BASE_URL           OpenAI-compatible endpoint (optional)
+Environment Variables (opencode local instance):
+  LLM_MODEL              Default model ID                        [default: claude-opus-4-5]
+  LLM_PROVIDER_ID        Model provider ID                       [default: anthropic]
+  LLM_MAX_TOKENS         Max tokens in response
+  LLM_TEMPERATURE        Sampling temperature (0-1)
+  LLM_SYSTEM_PROMPT      Custom system prompt
+
+Notes:
+  - Uses local opencode instance (no API keys needed)
+  - Make sure opencode service is running locally
+  - Model and provider must be available in your opencode setup
 
 Examples:
   # Static audit
@@ -203,13 +209,16 @@ Examples:
   axagent audit https://example.com --format json
   axagent https://example.com --categories anti-agent-friction,token-economics
 
-  # Task execution
-  LLM_API_KEY=sk-ant-... axagent task https://example.com "Find the cheapest item"
-  LLM_API_KEY=sk-ant-... axagent task https://example.com "Fill out contact form" --format md
+  # Task execution (with default local opencode)
+  axagent task https://example.com "Find the cheapest item"
+  axagent task https://example.com "Fill out contact form" --format md
+
+  # Task execution with custom model
+  LLM_MODEL=claude-sonnet-4 axagent task https://example.com "Find info"
 
   # Task execution with stealth mode (circumvent bot protection)
-  LLM_API_KEY=sk-ant-... axagent task https://protected-site.com "Find info" --stealth
-  LLM_API_KEY=sk-ant-... axagent task https://cloudflare-site.com "Get data" --stealth --with-audit
+  axagent task https://protected-site.com "Find info" --stealth
+  axagent task https://cloudflare-site.com "Get data" --stealth --with-audit
 
 Category IDs (for static audit):
   - structural-parsability

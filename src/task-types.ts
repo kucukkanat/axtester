@@ -63,7 +63,8 @@ export interface LLMResponse {
 
 export interface LLMAdapterConfig {
   model: string;
-  apiKey: string;
+  apiKey?: string; // optional for opencode (uses local instance)
+  providerId?: string; // optional, defaults to "anthropic" for opencode
   baseUrl?: string;
   maxTokens?: number; // default 4096
   temperature?: number; // default 0

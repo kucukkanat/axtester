@@ -28,12 +28,14 @@ bun run cli.ts https://example.com --format md --output report.md
 ```
 
 ### Dynamic Task Execution (Real-World Testing)
-```bash
-# Set LLM API key (Claude or OpenAI)
-export LLM_API_KEY=sk-ant-...
+Requires local [opencode](https://opencode.ai/) instance running.
 
-# Run a task with an LLM agent
+```bash
+# Run a task with an LLM agent (uses local opencode)
 bun run cli.ts task https://example.com "Find the product price"
+
+# With custom model
+LLM_MODEL=claude-sonnet-4 bun run cli.ts task https://example.com "Find the product price"
 
 # With stealth mode (bypass bot protection)
 bun run cli.ts task https://protected-site.com "Get data" --stealth
@@ -223,28 +225,31 @@ Token Economics: 55/100 - Content-to-noise ratio: 0.08 (low)
 
 Beyond static analysis, axagent can **actually navigate websites** using an LLM-powered agent. The agent reads the page, clicks elements, fills forms, extracts data, and reports barriers it encounters.
 
-### Setup
+### Prerequisites
 
-```bash
-# Install Bun packages (includes Puppeteer + LLM SDKs)
-bun install
+1. **Local opencode instance** - Make sure opencode is running locally
+   - Learn more: https://opencode.ai/
+   - Default expects: `http://localhost:8080` (configurable)
 
-# Set your LLM API key (Claude recommended)
-export LLM_API_KEY=sk-ant-...
-export LLM_PROVIDER=claude  # or 'openai' for GPT-4/others
-```
+2. **Bun packages**
+   ```bash
+   bun install
+   ```
 
 ### Basic Usage
 
 ```bash
-# Run a task on a website
-LLM_API_KEY=sk-ant-... bun run cli.ts task https://example.com "Find the product price"
+# Run a task on a website (uses local opencode defaults)
+bun run cli.ts task https://example.com "Find the product price"
 
 # Task execution with stealth mode (bypass bot protection)
-LLM_API_KEY=sk-ant-... bun run cli.ts task https://protected-site.com "Get data" --stealth
+bun run cli.ts task https://protected-site.com "Get data" --stealth
 
 # Combine dynamic task + static audit
-LLM_API_KEY=sk-ant-... bun run cli.ts task https://example.com "Fill contact form" --with-audit --format md
+bun run cli.ts task https://example.com "Fill contact form" --with-audit --format md
+
+# Use custom model available in your opencode setup
+LLM_MODEL=claude-sonnet-4 bun run cli.ts task https://example.com "Find the product price"
 ```
 
 ### Task Execution Options
@@ -293,7 +298,7 @@ When the agent encounters obstacles, it reports them:
 ### Example Task Output
 
 ```
-$ LLM_API_KEY=sk-ant-... bun run cli.ts task https://example.com "Find the cheapest item"
+$ bun run cli.ts task https://example.com "Find the cheapest item"
 
 🤖 Running task on https://example.com...
 📝 Prompt: Find the cheapest item
@@ -314,28 +319,34 @@ Tokens Used: 2,847 input + 1,234 output
 Estimated Cost: $0.0342
 ```
 
-### LLM Provider Configuration
+### Local opencode Configuration
 
-#### Claude (Anthropic)
+axagent uses local opencode SDK - no API keys needed! Configure models available in your opencode setup.
+
+#### Environment Variables
 ```bash
-export LLM_API_KEY=sk-ant-...
-export LLM_PROVIDER=claude
-export LLM_MODEL=claude-opus-4-5  # or claude-sonnet-4-6, claude-haiku-4-5
+# Model and provider configuration
+export LLM_MODEL=claude-opus-4-5          # Model ID (default: claude-opus-4-5)
+export LLM_PROVIDER_ID=anthropic           # Provider ID (default: anthropic)
+export LLM_MAX_TOKENS=4096                 # Max tokens (default: 4096)
+export LLM_TEMPERATURE=0                   # Sampling temperature (default: 0)
 ```
 
-#### OpenAI / GPT-4
-```bash
-export LLM_API_KEY=sk-...
-export LLM_PROVIDER=openai
-export LLM_MODEL=gpt-4
-```
+#### Supported Models (examples)
+- **Anthropic**: `claude-opus-4-5`, `claude-sonnet-4-6`, `claude-haiku-4-5`
+- **OpenAI**: `gpt-4-turbo`, `gpt-4o`
+- **Other**: Any model registered in your opencode instance
 
-#### Other OpenAI-Compatible (Gemini, local models, etc.)
+#### Example: Using different models
 ```bash
-export LLM_API_KEY=...
-export LLM_PROVIDER=openai
-export LLM_MODEL=your-model-id
-export LLM_BASE_URL=https://api.example.com/v1  # Custom endpoint
+# Default (Claude Opus)
+bun run cli.ts task https://example.com "Find the price"
+
+# With Claude Sonnet
+LLM_MODEL=claude-sonnet-4 bun run cli.ts task https://example.com "Find the price"
+
+# Custom setup
+LLM_PROVIDER_ID=openai LLM_MODEL=gpt-4o bun run cli.ts task https://example.com "Find the price"
 ```
 
 ### Stealth Mode (Anti-Bot Detection)
@@ -343,7 +354,7 @@ export LLM_BASE_URL=https://api.example.com/v1  # Custom endpoint
 When auditing sites with bot protection, enable stealth mode:
 
 ```bash
-LLM_API_KEY=sk-ant-... bun run cli.ts task https://cloudflare-protected.com "Get data" --stealth
+bun run cli.ts task https://cloudflare-protected.com "Get data" --stealth
 ```
 
 **Stealth Mode includes:**
@@ -367,7 +378,7 @@ LLM_API_KEY=sk-ant-... bun run cli.ts task https://cloudflare-protected.com "Get
 ### Combined Audit + Task Report
 
 ```bash
-LLM_API_KEY=sk-ant-... bun run cli.ts task https://example.com "Test form" --with-audit --format md
+bun run cli.ts task https://example.com "Test form" --with-audit --format md
 ```
 
 Output includes:
