@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Page</title>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "Example Product",
+      "description": "A great product for everyone",
+      "image": "https://example.com/photo.jpg",
+      "brand": {
+        "@type": "Brand",
+        "name": "ExampleBrand"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "29.99",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://example.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Products",
+          "item": "https://example.com/products"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Example Product"
+        }
+      ]
+    }
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Example Product</h1>
+    <p>$29.99</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Feature</th>
+          <th scope="col">Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Color</td>
+          <td>Blue</td>
+        </tr>
+        <tr>
+          <td>Size</td>
+          <td>Medium</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <nav aria-label="pagination">
+      <a href="?page=1">1</a>
+      <a href="?page=2">2</a>
+      <a rel="next" href="?page=3">Next</a>
+    </nav>
+  </main>
+</body>
+</html>

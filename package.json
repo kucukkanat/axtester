@@ -1,0 +1,28 @@
+{
+  "name": "axagent",
+  "version": "0.1.0",
+  "description": "AI agent readiness auditor for websites",
+  "type": "module",
+  "main": "./src/index.ts",
+  "bin": {
+    "axagent": "./cli.ts"
+  },
+  "scripts": {
+    "audit": "bun run cli.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "typecheck": "bun x tsc --noEmit"
+  },
+  "dependencies": {
+    "node-html-parser": "^6.1.13",
+    "puppeteer": "^22.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "@anthropic-ai/sdk": "^0.28.0",
+    "openai": "^4.60.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.4.0"
+  }
+}

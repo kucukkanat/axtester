@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protected Resource</title>
+</head>
+<body>
+  <!-- Cookie Consent Wall -->
+  <div id="onetrust-banner-sdk" style="position: fixed; bottom: 0; width: 100%;">
+    <p>We use cookies for analytics.</p>
+    <button id="onetrust-accept-btn">Accept</button>
+    <button id="onetrust-reject-btn">Reject</button>
+  </div>
+
+  <!-- reCAPTCHA -->
+  <div style="position: fixed; bottom: 10px; right: 10px;">
+    <iframe
+      src="https://www.google.com/recaptcha/api2/anchor?ar=1&k=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI&co=aHR0cDovL2xvY2FsaG9zdDo4MDc3&hl=en"
+      width="356"
+      height="60"
+      style="border: 1px solid #ccc"
+    ></iframe>
+  </div>
+
+  <main style="display: none;">
+    <h1>This content is hidden behind CAPTCHA</h1>
+    <p>You won't see this easily from an agent perspective.</p>
+  </main>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+</body>
+</html>
