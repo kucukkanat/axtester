@@ -46,13 +46,24 @@ export class OpencodeAdapter implements LLMAdapter {
     config?: Partial<LLMAdapterConfig>
   ): Promise<LLMResponse> {
     const mergedConfig = { ...this.defaultConfig, ...config };
-    const { client } = await this.clientPromise;
 
     try {
-      // Create a session
-      const session = await client.session.create({
-        body: { title: "axagent-task" },
-      });
+      const { client } = await Promise.race([
+        this.clientPromise,
+        new Promise<any>((_, reject) =>
+          setTimeout(() => reject(new Error("Opencode connection timeout")), 5000)
+        ),
+      ]);
+
+      // Create a session with timeout
+      const session = await Promise.race([
+        client.session.create({
+          body: { title: `axagent-task-${Date.now()}` },
+        }),
+        new Promise<any>((_, reject) =>
+          setTimeout(() => reject(new Error("Session creation timeout")), 10000)
+        ),
+      ]);
 
       // Convert messages to opencode format
       const opencodeParts: OpenCodePart[] = [];
@@ -105,19 +116,24 @@ export class OpencodeAdapter implements LLMAdapter {
         });
       }
 
-      // Send prompt to opencode
-      const response = await client.session.prompt({
-        path: { id: session.id },
-        body: {
-          model: {
-            providerID: this.providerId,
-            modelID: this.modelId,
+      // Send prompt to opencode with timeout
+      const response = await Promise.race([
+        client.session.prompt({
+          path: { id: session.id },
+          body: {
+            model: {
+              providerID: this.providerId,
+              modelID: this.modelId,
+            },
+            parts: opencodeParts,
+            max_tokens: mergedConfig.maxTokens || 4096,
+            temperature: mergedConfig.temperature ?? 0,
           },
-          parts: opencodeParts,
-          max_tokens: mergedConfig.maxTokens || 4096,
-          temperature: mergedConfig.temperature ?? 0,
-        },
-      });
+        }),
+        new Promise<any>((_, reject) =>
+          setTimeout(() => reject(new Error("Opencode prompt timeout (60s)")), 60000)
+        ),
+      ]);
 
       // Parse response
       const responseText = this.extractResponseText(response);
@@ -138,8 +154,9 @@ export class OpencodeAdapter implements LLMAdapter {
         stopReason: this.mapStopReason(response.stop_reason),
       };
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       throw new Error(
-        `Opencode API error: ${error instanceof Error ? error.message : String(error)}`
+        `Opencode API error: ${message}\n\nMake sure:\n1. opencode service is running locally\n2. LLM_PROVIDER_ID="${this.providerId}" is available\n3. LLM_MODEL="${this.modelId}" exists in your setup`
       );
     }
   }
