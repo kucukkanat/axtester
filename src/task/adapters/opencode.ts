@@ -139,6 +139,17 @@ export class OpencodeAdapter implements LLMAdapter {
       const responseText = this.extractResponseText(response);
       const toolCalls = this.extractToolCalls(responseText, tools);
 
+      // Debug: Log response format for first few calls
+      if (!globalThis.__opencodeDebugLogged) {
+        globalThis.__opencodeDebugLogged = true;
+        console.error("[DEBUG] OpenCode Response Format:");
+        console.error("Keys:", Object.keys(response));
+        console.error("Usage:", response.usage);
+        console.error("Stop Reason:", response.stop_reason);
+        console.error("Parts:", Array.isArray(response.parts) ? response.parts.length : "not array");
+        console.error("Text Length:", responseText.length);
+      }
+
       return {
         message: {
           role: "assistant",
@@ -147,11 +158,11 @@ export class OpencodeAdapter implements LLMAdapter {
         },
         usage: response.usage
           ? {
-              inputTokens: response.usage.input_tokens || 0,
-              outputTokens: response.usage.output_tokens || 0,
+              inputTokens: response.usage.input_tokens || response.usage.inputTokens || 0,
+              outputTokens: response.usage.output_tokens || response.usage.outputTokens || 0,
             }
-          : undefined,
-        stopReason: this.mapStopReason(response.stop_reason),
+          : { inputTokens: 0, outputTokens: 0 },
+        stopReason: this.mapStopReason(response.stop_reason || "end_turn"),
       };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
